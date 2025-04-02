@@ -1,0 +1,3 @@
+<Directory "C:/xampp/htdocs/project/assets/images">
+    Require all granted
+</Directory>

@@ -1,0 +1,7 @@
+{
+    "name": "supagrocery",
+    "description": "A grocery delivery order management system",
+    "dependencies": {
+      "php": ">=7.4"
+    }
+  }
