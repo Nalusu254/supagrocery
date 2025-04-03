@@ -1,34 +1,40 @@
-<html>
-    <head>
-    <title>Welcome to Supa Grocery</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body class="home-page">
-    <header>
-        <nav>
-            <div class="logo">Supa Grocery</div>
-            <ul>
-                <li><a href="home.php">Home</a></li>
-                <li><a href="views/products.php">Products</a></li>
-                <li><a href="views/track_order.php">Track Order</a></li>
-                <li><a href="views/about.php">About</a></li>
-                <li><a href="views/contact.php">Contact</a></li>
-                <li><a href="views/login.php">Login</a></li>
-                <li><a href="views/sign_up.php">Sign_Up</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <section class="hero">
-        <div class="overlay"></div>
-        <div class="hero-content">
-            <h1>Fresh Groceries, Delivered to Your Door</h1>
-            <p>Order now and enjoy fast delivery</p>
-            <a href="views/products.php" class="btn">SHOP NOW</a>
-        </div>
-    </section>
-    <footer>
-        <p>&copy; 2025 Supa Grocery. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+<?php
+session_start();
+define('ROOT_PATH', __DIR__);
+define('BASE_URL', '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']));
+
+// Load configuration
+require_once ROOT_PATH . '/config/db.php';
+
+// Load common functions and utilities
+require_once ROOT_PATH . '/includes/functions.php';
+
+// Route the request
+$request = $_SERVER['REQUEST_URI'];
+$path = parse_url($request, PHP_URL_PATH);
+$path = ltrim(substr($path, strlen(dirname($_SERVER['PHP_SELF']))), '/');
+
+// Simple router
+switch ($path) {
+    case '':
+    case 'home':
+        require ROOT_PATH . '/src/controllers/home.php';
+        break;
+    case 'products':
+        require ROOT_PATH . '/src/controllers/products.php';
+        break;
+    case 'cart':
+        require ROOT_PATH . '/src/controllers/cart.php';
+        break;
+    case 'login':
+        require ROOT_PATH . '/src/views/login.php';
+        break;
+    case 'admin':
+        require ROOT_PATH . '/src/views/admin/admin_login.php';
+        break;
+    default:
+        http_response_code(404);
+        require ROOT_PATH . '/src/views/404.php';
+        break;
+}
+?> 

@@ -1,0 +1,64 @@
+# Environment files
+.env
+*.env
+
+# Configuration
+config/db.php
+config/*.local.php
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Logs and caches
+/logs/*
+/cache/*
+*.log
+
+# Uploaded files
+/assets/uploads/*
+/public/uploads/*
+
+# SSL certificates
+*.pem
+*.crt
+*.key
+*.csr
+*.srl
+*.cert
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.old
+/backup/
+
+# Build files
+/dist/
+/build/
+
+# Test coverage
+/coverage/
+/tests/coverage/
+
+# Keep .gitkeep files
+!.gitkeep
+!logs/.gitkeep
+!cache/.gitkeep
+!assets/uploads/.gitkeep 
