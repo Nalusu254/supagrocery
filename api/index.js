@@ -1,6 +1,7 @@
 // Mock database
 const users = [];
 const carts = new Map();
+const products = new Map();
 let orders = [];
 
 // Admin configuration
@@ -10,7 +11,7 @@ const AGENT_DEPARTMENTS = ['Sales', 'Support', 'Inventory'];
 module.exports = (req, res) => {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     // Handle OPTIONS request for CORS
@@ -38,7 +39,15 @@ module.exports = (req, res) => {
                 return handleRegister(req, res);
             case '/api/checkout':
                 return handleCheckout(req, res);
+            case '/api/agent/dashboard':
+                return handleAgentDashboard(req, res);
+            case '/api/agent/products':
+                return handleAgentProducts(req, res);
             default:
+                // Check if it's a product detail request
+                if (path.match(/^\/api\/agent\/products\/[\w-]+$/)) {
+                    return handleAgentProductDetail(req, res);
+                }
                 return res.status(404).json({
                     status: 'error',
                     message: 'Not found'
@@ -318,6 +327,180 @@ function handleCheckout(req, res) {
     });
 }
 
+async function handleAgentDashboard(req, res) {
+    const userId = authenticateRequest(req);
+    if (!userId) {
+        return res.status(401).json({
+            status: 'error',
+            message: 'Unauthorized'
+        });
+    }
+
+    const user = users.find(u => u.id === userId);
+    if (!user || user.role !== 'agent') {
+        return res.status(403).json({
+            status: 'error',
+            message: 'Access denied'
+        });
+    }
+
+    // Get agent's products
+    const agentProducts = Array.from(products.values()).filter(p => p.agentId === userId);
+    
+    // Calculate statistics
+    const stats = {
+        totalProducts: agentProducts.length,
+        totalSales: agentProducts.reduce((sum, product) => {
+            const productOrders = orders.filter(o => o.items.some(i => i.productId === product.id));
+            return sum + productOrders.reduce((orderSum, order) => {
+                const item = order.items.find(i => i.productId === product.id);
+                return orderSum + (item.price * item.quantity);
+            }, 0);
+        }, 0),
+        activeOrders: orders.filter(o => 
+            o.status === 'pending' && 
+            o.items.some(i => {
+                const product = products.get(i.productId);
+                return product && product.agentId === userId;
+            })
+        ).length
+    };
+
+    res.json({
+        status: 'ok',
+        success: true,
+        stats
+    });
+}
+
+async function handleAgentProducts(req, res) {
+    const userId = authenticateRequest(req);
+    if (!userId) {
+        return res.status(401).json({
+            status: 'error',
+            message: 'Unauthorized'
+        });
+    }
+
+    const user = users.find(u => u.id === userId);
+    if (!user || user.role !== 'agent') {
+        return res.status(403).json({
+            status: 'error',
+            message: 'Access denied'
+        });
+    }
+
+    if (req.method === 'GET') {
+        // Get agent's products with filters
+        const { search, status } = parseQueryParams(req.url);
+        let agentProducts = Array.from(products.values())
+            .filter(p => p.agentId === userId);
+
+        if (search) {
+            agentProducts = agentProducts.filter(p => 
+                p.name.toLowerCase().includes(search.toLowerCase()) ||
+                p.description.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+
+        if (status && status !== 'all') {
+            agentProducts = agentProducts.filter(p => p.status.toLowerCase() === status);
+        }
+
+        res.json({
+            status: 'ok',
+            success: true,
+            products: agentProducts
+        });
+    } else if (req.method === 'POST') {
+        // Add new product
+        const formData = await parseFormData(req);
+        const productData = {
+            id: generateId(),
+            agentId: userId,
+            name: formData.name,
+            description: formData.description,
+            price: parseFloat(formData.price),
+            stock: parseInt(formData.stock),
+            category: formData.category,
+            image: formData.image || '/assets/images/products/default.jpg',
+            status: 'active',
+            createdAt: new Date().toISOString()
+        };
+
+        products.set(productData.id, productData);
+
+        res.json({
+            status: 'ok',
+            success: true,
+            product: productData
+        });
+    }
+}
+
+async function handleAgentProductDetail(req, res) {
+    const userId = authenticateRequest(req);
+    if (!userId) {
+        return res.status(401).json({
+            status: 'error',
+            message: 'Unauthorized'
+        });
+    }
+
+    const user = users.find(u => u.id === userId);
+    if (!user || user.role !== 'agent') {
+        return res.status(403).json({
+            status: 'error',
+            message: 'Access denied'
+        });
+    }
+
+    const productId = req.url.split('/').pop();
+    const product = products.get(productId);
+
+    if (!product || product.agentId !== userId) {
+        return res.status(404).json({
+            status: 'error',
+            message: 'Product not found'
+        });
+    }
+
+    if (req.method === 'GET') {
+        res.json({
+            status: 'ok',
+            success: true,
+            product
+        });
+    } else if (req.method === 'PUT') {
+        const formData = await parseFormData(req);
+        const updatedProduct = {
+            ...product,
+            name: formData.name,
+            description: formData.description,
+            price: parseFloat(formData.price),
+            stock: parseInt(formData.stock),
+            category: formData.category,
+            image: formData.image || product.image,
+            updatedAt: new Date().toISOString()
+        };
+
+        products.set(productId, updatedProduct);
+
+        res.json({
+            status: 'ok',
+            success: true,
+            product: updatedProduct
+        });
+    } else if (req.method === 'DELETE') {
+        products.delete(productId);
+        res.json({
+            status: 'ok',
+            success: true,
+            message: 'Product deleted successfully'
+        });
+    }
+}
+
 // Helper functions
 function getProducts() {
     return [
@@ -376,11 +559,12 @@ function parseQueryParams(url) {
     const [, queryString] = url.split('?');
     if (!queryString) return {};
 
-    return queryString.split('&').reduce((params, param) => {
-        const [key, value] = param.split('=');
-        params[key] = decodeURIComponent(value);
-        return params;
-    }, {});
+    return Object.fromEntries(
+        queryString.split('&').map(param => {
+            const [key, value] = param.split('=');
+            return [key, decodeURIComponent(value)];
+        })
+    );
 }
 
 function calculateCartSummary(cart) {
@@ -406,11 +590,25 @@ function authenticateRequest(req) {
         return null;
     }
 
+    const token = authHeader.split(' ')[1];
     try {
-        const token = authHeader.split(' ')[1];
         const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
         return decoded.userId;
-    } catch (error) {
+    } catch {
         return null;
     }
+}
+
+async function parseFormData(req) {
+    // In a real implementation, you would use a library like formidable
+    // For this example, we'll assume JSON data
+    const chunks = [];
+    for await (const chunk of req) {
+        chunks.push(chunk);
+    }
+    return JSON.parse(Buffer.concat(chunks).toString());
+}
+
+function generateId() {
+    return Math.random().toString(36).substr(2, 9);
 } 
