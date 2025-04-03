@@ -1,13 +1,7 @@
 {
     "name": "supagrocery/web",
     "description": "Online Grocery Shopping System",
-    "type": "project",
     "require": {
-        "php": ">=7.4",
-        "ext-json": "*"
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist"
+        "php": "^7.4"
     }
 }
