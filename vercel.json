@@ -9,11 +9,7 @@
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "env": {
-        "APP_ENV": "production",
-        "DB_HOST": "@db_host",
-        "DB_NAME": "@db_name",
-        "DB_USER": "@db_user",
-        "DB_PASS": "@db_pass"
+        "APP_ENV": "production"
     },
     "build": {
         "env": {
