@@ -17,15 +17,26 @@ async function loadFeaturedProducts() {
         if (data.products && Array.isArray(data.products)) {
             productGrid.innerHTML = data.products.map(product => `
                 <div class="product-card">
-                    <img src="${product.image}" alt="${product.name}">
-                    <h4>${product.name}</h4>
-                    <p>${product.price}</p>
-                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h4>${product.name}</h4>
+                        <p class="price">${product.price}</p>
+                        <p class="description">${product.description}</p>
+                        <button onclick="addToCart(${product.id})">
+                            Add to Cart
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
     } catch (error) {
         console.error('Error loading products:', error);
+        const productGrid = document.querySelector('.product-grid');
+        if (productGrid) {
+            productGrid.innerHTML = '<p class="error">Failed to load products. Please try again later.</p>';
+        }
     }
 }
 
@@ -42,6 +53,11 @@ function updateActiveNav() {
 
 async function addToCart(productId) {
     try {
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Adding...';
+        button.disabled = true;
+
         const response = await fetch('/api/cart', {
             method: 'POST',
             headers: {
@@ -50,11 +66,18 @@ async function addToCart(productId) {
             body: JSON.stringify({ productId })
         });
         const data = await response.json();
+        
         if (data.success) {
-            alert('Product added to cart!');
+            button.textContent = '✓ Added';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            }, 2000);
         }
     } catch (error) {
         console.error('Error adding to cart:', error);
         alert('Failed to add product to cart');
+        button.textContent = originalText;
+        button.disabled = false;
     }
 } 
