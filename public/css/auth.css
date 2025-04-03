@@ -3,29 +3,30 @@
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 200px);
-    padding: 2rem;
+    padding: 2rem var(--spacing-unit);
+    margin-top: -2rem;
 }
 
 .auth-card {
     background: var(--card-background, white);
-    border-radius: 12px;
-    padding: 2rem;
+    border-radius: var(--border-radius);
+    padding: clamp(1.5rem, 5vw, 2.5rem);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
 }
 
 .auth-card h2 {
     color: var(--primary-color);
     text-align: center;
     margin-bottom: 2rem;
-    font-size: 1.8rem;
+    font-size: clamp(1.5rem, 4vw, 1.8rem);
 }
 
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: clamp(1rem, 3vw, 1.5rem);
 }
 
 .form-group {
@@ -37,15 +38,17 @@
 .form-group label {
     color: var(--text-color);
     font-weight: 500;
+    font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .form-group input,
 .form-group select {
-    padding: 0.75rem;
+    padding: clamp(0.6rem, 2vw, 0.75rem);
     border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
+    border-radius: var(--border-radius);
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    transition: all 0.3s ease;
+    width: 100%;
 }
 
 .form-group input:focus,
@@ -58,6 +61,12 @@
 .form-group select {
     cursor: pointer;
     background-color: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
 }
 
 .auth-form button {
@@ -86,8 +95,9 @@
 
 .auth-links {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: clamp(1rem, 3vw, 1.5rem);
     color: var(--text-color);
+    font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .auth-links a {
@@ -109,35 +119,42 @@
 #agentFields,
 #adminFields {
     border-top: 1px solid #eee;
-    padding-top: 1.5rem;
+    padding-top: clamp(1rem, 3vw, 1.5rem);
     margin-top: 0.5rem;
 }
 
 .error-message,
 .success-message {
-    padding: 0.75rem;
-    border-radius: 4px;
+    padding: clamp(0.6rem, 2vw, 0.75rem);
+    border-radius: var(--border-radius);
     margin-bottom: 1rem;
-    font-size: 0.9rem;
+    font-size: clamp(0.85rem, 2vw, 0.9rem);
     text-align: center;
 }
 
 .error-message {
     background-color: #ffebee;
-    color: #d32f2f;
+    color: var(--error-color);
     border: 1px solid #ffcdd2;
 }
 
 .success-message {
     background-color: #e8f5e9;
-    color: #2e7d32;
+    color: var(--success-color);
     border: 1px solid #c8e6c9;
 }
 
 /* Navigation button styles */
+nav {
+    display: flex;
+    gap: clamp(0.25rem, 1vw, 0.5rem);
+    flex-wrap: wrap;
+}
+
 nav .btn {
     text-decoration: none;
-    margin: 0 0.25rem;
+    margin: 0 clamp(0.125rem, 0.5vw, 0.25rem);
+    font-size: clamp(0.85rem, 2vw, 1rem);
 }
 
 nav .btn.active {
@@ -145,21 +162,78 @@ nav .btn.active {
     color: var(--accent-color);
 }
 
-@media (max-width: 480px) {
-    .auth-card {
-        padding: 1.5rem;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 1.5rem var(--spacing-unit);
+        margin-top: 0;
     }
-    
-    .auth-form {
-        gap: 1rem;
+
+    .auth-card {
+        padding: clamp(1.25rem, 4vw, 1.5rem);
     }
 
     nav {
-        flex-wrap: wrap;
+        justify-content: center;
         gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 1rem;
+    }
+
+    .auth-card {
+        padding: 1.25rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    nav {
+        flex-direction: column;
+        width: 100%;
     }
 
     nav .btn {
-        margin: 0.25rem;
+        width: 100%;
+        margin: 0.125rem 0;
+    }
+
+    .auth-form {
+        gap: 1rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .auth-card {
+        background: #1a1a1a;
+    }
+
+    .form-group input,
+    .form-group select {
+        background-color: #2d2d2d;
+        border-color: #404040;
+        color: #fff;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+    }
+
+    .error-message {
+        background-color: rgba(211, 47, 47, 0.1);
+        border-color: rgba(211, 47, 47, 0.3);
+    }
+
+    .success-message {
+        background-color: rgba(46, 125, 50, 0.1);
+        border-color: rgba(46, 125, 50, 0.3);
     }
 } 
