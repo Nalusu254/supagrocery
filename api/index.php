@@ -49,4 +49,12 @@ switch ($path) {
         require ROOT_PATH . '/src/views/404.php';
         break;
 }
+
+header('Content-Type: application/json');
+echo json_encode([
+    'status' => 'ok',
+    'message' => 'Supagrocery API is running',
+    'php_version' => PHP_VERSION,
+    'timestamp' => time()
+]);
 ?> 

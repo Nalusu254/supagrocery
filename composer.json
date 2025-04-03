@@ -3,13 +3,11 @@
     "description": "Online Grocery Shopping System",
     "type": "project",
     "require": {
-        "php": "^7.4",
-        "ext-mysqli": "*",
+        "php": ">=7.4",
         "ext-json": "*"
     },
     "config": {
         "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true
+        "preferred-install": "dist"
     }
 }
