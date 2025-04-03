@@ -1,12 +1,16 @@
 {
     "name": "supagrocery",
     "version": "1.0.0",
-    "description": "Online Grocery Shopping System",
-    "private": true,
-    "scripts": {
-        "vercel-build": "echo 'Building...'"
-    },
+    "description": "Supagrocery API",
+    "main": "api/index.js",
     "engines": {
         "node": ">=14.0.0"
+    },
+    "scripts": {
+        "start": "vercel dev",
+        "deploy": "vercel --prod"
+    },
+    "dependencies": {
+        "@vercel/node": "^2.0.0"
     }
 } 
