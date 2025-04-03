@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Supagrocery</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/buttons.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="container">
+                <h1>Supagrocery</h1>
+                <nav>
+                    <a href="/" class="btn btn-secondary btn-small">Home</a>
+                    <a href="/products" class="btn btn-secondary btn-small">Products</a>
+                    <a href="/cart" class="btn btn-secondary btn-small">Cart</a>
+                    <a href="/login" class="btn btn-secondary btn-small">Login</a>
+                    <a href="/register" class="btn btn-primary btn-small active">Register</a>
+                </nav>
+            </div>
+        </header>
+        <main>
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>Register</h2>
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Register as</label>
+                            <select id="role" name="role" required>
+                                <option value="customer">Customer</option>
+                                <option value="agent">Agent</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div id="agentFields" class="hidden">
+                            <div class="form-group">
+                                <label for="agentId">Agent ID</label>
+                                <input type="text" id="agentId" name="agentId">
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <input type="text" id="department" name="department">
+                            </div>
+                        </div>
+                        <div id="adminFields" class="hidden">
+                            <div class="form-group">
+                                <label for="adminCode">Admin Code</label>
+                                <input type="text" id="adminCode" name="adminCode">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Register</button>
+                        <p class="auth-links">
+                            Already have an account? <a href="/login">Login</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2024 Supagrocery. All rights reserved.</p>
+        </footer>
+    </div>
+    <script src="/js/register.js"></script>
+</body>
+</html> 

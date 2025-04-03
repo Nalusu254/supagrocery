@@ -40,6 +40,18 @@
             "dest": "/public/login.html"
         },
         {
+            "src": "/register",
+            "dest": "/public/register.html"
+        },
+        {
+            "src": "/admin/dashboard",
+            "dest": "/public/admin/dashboard.html"
+        },
+        {
+            "src": "/agent/dashboard",
+            "dest": "/public/agent/dashboard.html"
+        },
+        {
             "src": "/(.*)",
             "dest": "/public/index.html"
         }

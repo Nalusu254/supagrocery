@@ -3,6 +3,10 @@ const users = [];
 const carts = new Map();
 let orders = [];
 
+// Admin configuration
+const ADMIN_CODE = 'ADMIN123'; // In production, this should be stored securely
+const AGENT_DEPARTMENTS = ['Sales', 'Support', 'Inventory'];
+
 module.exports = (req, res) => {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,6 +34,8 @@ module.exports = (req, res) => {
                 return handleCartRemove(req, res);
             case '/api/auth/login':
                 return handleLogin(req, res);
+            case '/api/auth/register':
+                return handleRegister(req, res);
             case '/api/checkout':
                 return handleCheckout(req, res);
             default:
@@ -174,32 +180,101 @@ function handleCartRemove(req, res) {
 function handleLogin(req, res) {
     const { email, password } = JSON.parse(req.body || '{}');
     
-    // For demo purposes, auto-create user if not exists
-    let user = users.find(u => u.email === email);
-    if (!user) {
-        user = {
-            id: users.length + 1,
-            email,
-            password // In production, this should be hashed
-        };
-        users.push(user);
-    }
-
-    // In production, verify password hash
-    if (user.password !== password) {
+    const user = users.find(u => u.email === email);
+    if (!user || user.password !== password) { // In production, verify password hash
         return res.status(401).json({
             status: 'error',
             message: 'Invalid credentials'
         });
     }
 
-    // Generate mock token
-    const token = Buffer.from(JSON.stringify({ userId: user.id, email: user.email })).toString('base64');
+    // Generate token with role
+    const token = Buffer.from(JSON.stringify({
+        userId: user.id,
+        email: user.email,
+        role: user.role
+    })).toString('base64');
 
     res.json({
         status: 'ok',
         success: true,
-        token
+        token,
+        role: user.role
+    });
+}
+
+function handleRegister(req, res) {
+    const { fullName, email, password, role, adminCode, agentId, department } = JSON.parse(req.body || '{}');
+
+    // Basic validation
+    if (!fullName || !email || !password || !role) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Missing required fields'
+        });
+    }
+
+    // Check if email already exists
+    if (users.some(u => u.email === email)) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Email already registered'
+        });
+    }
+
+    // Role-specific validation
+    if (role === 'admin') {
+        if (adminCode !== ADMIN_CODE) {
+            return res.status(403).json({
+                status: 'error',
+                message: 'Invalid admin code'
+            });
+        }
+    } else if (role === 'agent') {
+        if (!agentId || !department) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Agent ID and department are required'
+            });
+        }
+        if (!AGENT_DEPARTMENTS.includes(department)) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Invalid department'
+            });
+        }
+    }
+
+    // Create new user
+    const user = {
+        id: users.length + 1,
+        fullName,
+        email,
+        password, // In production, this should be hashed
+        role,
+        createdAt: new Date().toISOString()
+    };
+
+    // Add role-specific data
+    if (role === 'agent') {
+        user.agentId = agentId;
+        user.department = department;
+    }
+
+    users.push(user);
+
+    // Generate token
+    const token = Buffer.from(JSON.stringify({
+        userId: user.id,
+        email: user.email,
+        role: user.role
+    })).toString('base64');
+
+    res.json({
+        status: 'ok',
+        success: true,
+        token,
+        role: user.role
     });
 }
 
