@@ -1,8 +1,14 @@
 {
     "version": 2,
     "builds": [
-        { "src": "api/*.js", "use": "@vercel/node" },
-        { "src": "public/**/*", "use": "@vercel/static" }
+        {
+            "src": "api/index.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "public/**/*",
+            "use": "@vercel/static"
+        }
     ],
     "routes": [
         {
@@ -20,6 +26,18 @@
         {
             "src": "/js/(.*)",
             "dest": "/public/js/$1"
+        },
+        {
+            "src": "/products",
+            "dest": "/public/products.html"
+        },
+        {
+            "src": "/cart",
+            "dest": "/public/cart.html"
+        },
+        {
+            "src": "/login",
+            "dest": "/public/login.html"
         },
         {
             "src": "/(.*)",
