@@ -1,0 +1,23 @@
+{
+    "version": 2,
+    "functions": {
+        "api/*.php": {
+            "runtime": "vercel-php@0.6.0"
+        }
+    },
+    "routes": [
+        { "src": "/(.*)", "dest": "/api/index.php" }
+    ],
+    "env": {
+        "APP_ENV": "production",
+        "DB_HOST": "@db_host",
+        "DB_NAME": "@db_name",
+        "DB_USER": "@db_user",
+        "DB_PASS": "@db_pass"
+    },
+    "build": {
+        "env": {
+            "PHP_VERSION": "8.1"
+        }
+    }
+} 
