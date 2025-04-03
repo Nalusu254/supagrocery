@@ -1,7 +1,0 @@
-{
-    "name": "supagrocery/web",
-    "description": "Online Grocery Shopping System",
-    "require": {
-        "php": "^7.4"
-    }
-}
