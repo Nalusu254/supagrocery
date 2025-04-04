@@ -27,6 +27,119 @@ The SupaGrocery platform follows a client-server architecture with the following
 - **Progressive Enhancement**: Core functionality works without JavaScript
 - **Mobile-First Design**: Responsive design principles applied throughout
 
+## Flow Charts
+
+### User Authentication Flow
+```mermaid
+flowchart TD
+    A[User Visits Site] --> B{Has Account?}
+    B -->|No| C[Sign Up]
+    B -->|Yes| D[Login]
+    C --> E[Enter Details]
+    E --> F[Validate Input]
+    F -->|Invalid| E
+    F -->|Valid| G[Create Account]
+    G --> H[Generate JWT]
+    D --> I[Enter Credentials]
+    I --> J[Validate]
+    J -->|Invalid| I
+    J -->|Valid| H
+    H --> K[Store Token]
+    K --> L[Redirect to Dashboard]
+```
+
+### Shopping Cart Flow
+```mermaid
+flowchart TD
+    A[View Product] --> B[Add to Cart]
+    B --> C[Update Cart State]
+    C --> D{Cart Storage}
+    D --> E[Local Storage]
+    D --> F[Server Sync]
+    B --> G[Show Cart Preview]
+    G --> H{Actions}
+    H --> I[Update Quantity]
+    H --> J[Remove Item]
+    H --> K[Proceed to Checkout]
+    K --> L{User Logged In?}
+    L -->|No| M[Login Flow]
+    L -->|Yes| N[Checkout Process]
+```
+
+### Checkout Process Flow
+```mermaid
+flowchart TD
+    A[Start Checkout] --> B[Review Cart]
+    B --> C[Enter Shipping Info]
+    C --> D[Validate Address]
+    D -->|Invalid| C
+    D -->|Valid| E[Select Payment]
+    E --> F[Process Payment]
+    F -->|Failed| E
+    F -->|Success| G[Create Order]
+    G --> H[Send Confirmation]
+    H --> I[Clear Cart]
+    I --> J[Show Order Success]
+```
+
+### Product Management Flow
+```mermaid
+flowchart TD
+    A[Agent Login] --> B[Dashboard]
+    B --> C{Actions}
+    C --> D[Add Product]
+    C --> E[Edit Product]
+    C --> F[Delete Product]
+    D --> G[Enter Details]
+    G --> H[Validate Input]
+    H -->|Invalid| G
+    H -->|Valid| I[Save Product]
+    E --> J[Load Product]
+    J --> K[Update Details]
+    K --> L[Validate Changes]
+    L -->|Invalid| K
+    L -->|Valid| M[Save Changes]
+    F --> N[Confirm Delete]
+    N -->|Cancelled| B
+    N -->|Confirmed| O[Remove Product]
+```
+
+### Order Processing Flow
+```mermaid
+flowchart TD
+    A[New Order] --> B[Validate Stock]
+    B -->|Out of Stock| C[Notify Customer]
+    B -->|In Stock| D[Process Payment]
+    D -->|Failed| E[Payment Error]
+    D -->|Success| F[Update Inventory]
+    F --> G[Generate Invoice]
+    G --> H[Send Confirmation]
+    H --> I[Update Order Status]
+    I --> J{Status Updates}
+    J --> K[Processing]
+    J --> L[Shipped]
+    J --> M[Delivered]
+    J --> N[Completed]
+```
+
+### Inventory Management Flow
+```mermaid
+flowchart TD
+    A[Start] --> B{Check Stock}
+    B --> C[Low Stock Alert]
+    B --> D[Update Quantity]
+    B --> E[Stock History]
+    C --> F[Notify Agent]
+    D --> G[Manual Update]
+    D --> H[Automatic Update]
+    G --> I[Validate Changes]
+    H --> I
+    I -->|Invalid| J[Show Error]
+    I -->|Valid| K[Save Changes]
+    K --> L[Log Update]
+    E --> M[Generate Report]
+```
+
 ## Component Design
 
 ### Frontend Components
