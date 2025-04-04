@@ -17,15 +17,92 @@
 ### System Architecture
 The SupaGrocery platform follows a client-server architecture with the following key components:
 
-- **Frontend Layer**: Static HTML/CSS/JS served via Vercel's edge network
-- **API Layer**: Serverless functions handling business logic
-- **Data Layer**: In-memory storage (mock database)
+- **Frontend Layer**: 
+  - Static HTML/CSS/JS served via Vercel's edge network
+  - React-based SPA with client-side routing
+  - Responsive design using Tailwind CSS
+  - State management with Redux Toolkit
+  - PWA capabilities for offline support
+
+- **API Layer**: 
+  - Serverless functions handling business logic
+  - Node.js runtime environment
+  - Express.js middleware framework
+  - RESTful API design principles
+  - Rate limiting and request validation
+
+- **Data Layer**: 
+  - In-memory storage (mock database)
+  - Structured data models
+  - ACID transaction support
+  - Data validation middleware
+  - Caching layer for performance
 
 ### Key Design Decisions
-- **Stateless Architecture**: All API endpoints are designed to be stateless
-- **Edge Computing**: Leveraging Vercel's edge network for optimal performance
-- **Progressive Enhancement**: Core functionality works without JavaScript
-- **Mobile-First Design**: Responsive design principles applied throughout
+- **Stateless Architecture**: 
+  - All API endpoints are designed to be stateless
+  - Session management via JWT tokens
+  - Distributed caching for scalability
+  - No server-side session storage
+  - Horizontal scaling support
+
+- **Edge Computing**: 
+  - Leveraging Vercel's edge network for optimal performance
+  - Global CDN distribution
+  - Automatic SSL/TLS encryption
+  - Edge caching strategies
+  - Regional failover support
+
+- **Progressive Enhancement**: 
+  - Core functionality works without JavaScript
+  - Graceful degradation support
+  - Semantic HTML structure
+  - ARIA attributes for accessibility
+  - Server-side rendering capability
+
+- **Mobile-First Design**: 
+  - Responsive design principles applied throughout
+  - Touch-friendly interfaces
+  - Optimized asset loading
+  - Offline capabilities
+  - Native-like experience
+
+### Technical Stack Details
+
+#### Frontend Technologies
+- **Core Framework**: React 18.x
+- **State Management**: Redux Toolkit 1.9.x
+- **Styling**: Tailwind CSS 3.x
+- **Build Tool**: Vite 4.x
+- **Testing**: Jest + React Testing Library
+- **Package Manager**: pnpm
+- **Code Quality**:
+  - ESLint with Airbnb config
+  - Prettier
+  - TypeScript 5.x
+  - Husky pre-commit hooks
+
+#### Backend Technologies
+- **Runtime**: Node.js 18.x LTS
+- **Framework**: Express.js 4.x
+- **API Documentation**: OpenAPI/Swagger
+- **Validation**: Joi/Zod
+- **Security**:
+  - Helmet.js
+  - CORS
+  - Rate limiting
+  - Input sanitization
+
+#### Development Tools
+- **Version Control**: Git + GitHub
+- **CI/CD**: GitHub Actions
+- **Monitoring**: 
+  - Sentry for error tracking
+  - New Relic for performance
+  - LogRocket for session replay
+- **Analytics**: 
+  - Google Analytics 4
+  - Custom event tracking
 
 ## Flow Charts
 
@@ -143,40 +220,108 @@ flowchart TD
 ## Component Design
 
 ### Frontend Components
+
 1. **Product Listing**
-   - Grid-based layout
-   - Lazy loading for images
-   - Client-side filtering and sorting
-   - Responsive breakpoints
+   - **Implementation Details**:
+     ```typescript
+     interface ProductListProps {
+       category?: string;
+       sortBy?: 'price' | 'name' | 'date';
+       pageSize?: number;
+       filters?: FilterOptions;
+     }
+     ```
+   - **Key Features**:
+     - Virtual scrolling for large lists
+     - Debounced search input
+     - Skeleton loading states
+     - Error boundary implementation
+     - Retry mechanism for failed requests
 
 2. **Shopping Cart**
-   - Local storage persistence
-   - Real-time price calculations
-   - Quantity validation
-   - Cart synchronization
+   - **State Management**:
+     ```typescript
+     interface CartState {
+       items: CartItem[];
+       total: number;
+       currency: string;
+       discounts: Discount[];
+       shipping: ShippingOption[];
+     }
+     ```
+   - **Storage Strategy**:
+     - IndexedDB for offline support
+     - Redux persistence
+     - Server synchronization
+     - Conflict resolution
+     - Automatic recovery
 
 3. **Checkout Flow**
-   - Multi-step form design
-   - Form validation
-   - Payment processing integration
-   - Order confirmation
+   - **Form Management**:
+     - React Hook Form
+     - Yup validation schema
+     - Address verification
+     - Payment gateway integration
+     - Order summary calculation
+   - **Security Measures**:
+     - PCI compliance
+     - Data encryption
+     - Secure form fields
+     - 3D Secure support
+     - Fraud detection
 
 ### Backend Components
+
 1. **Authentication Service**
-   - JWT-based authentication
-   - Role-based access control
-   - Session management
+   - **JWT Configuration**:
+     ```javascript
+     const jwtConfig = {
+       expiresIn: '24h',
+       algorithm: 'RS256',
+       issuer: 'supagrocery-api',
+       audience: ['web-client', 'mobile-app']
+     };
+     ```
+   - **Security Features**:
+     - Password hashing (bcrypt)
+     - Rate limiting
+     - IP blocking
+     - Session management
+     - Refresh token rotation
 
 2. **Product Service**
-   - CRUD operations
-   - Search functionality
-   - Category management
-   - Inventory tracking
+   - **Caching Strategy**:
+     ```javascript
+     const cacheConfig = {
+       ttl: 3600,
+       checkPeriod: 600,
+       deleteOnExpire: true,
+       maxKeys: 1000
+     };
+     ```
+   - **Search Implementation**:
+     - Elasticsearch integration
+     - Fuzzy matching
+     - Category filtering
+     - Price range filtering
+     - Sorting algorithms
 
 3. **Order Service**
-   - Order processing
-   - Status management
-   - Email notifications
+   - **State Machine**:
+     ```typescript
+     type OrderStatus =
+       | 'pending'
+       | 'processing'
+       | 'shipped'
+       | 'delivered'
+       | 'cancelled';
+     ```
+   - **Event System**:
+     - Order status updates
+     - Inventory management
+     - Email notifications
+     - SMS notifications
+     - Webhook integrations
 
 ## Data Models
 
@@ -350,22 +495,52 @@ Response:
 ## Performance Optimization
 
 ### Frontend
-- Code splitting
-- Asset optimization
-- Caching strategy
-- Lazy loading
+- **Code Splitting**:
+  ```javascript
+  const ProductDetail = lazy(() => import('./ProductDetail'));
+  const ShoppingCart = lazy(() => import('./ShoppingCart'));
+  ```
+- **Asset Optimization**:
+  - Image compression
+  - WebP format usage
+  - Lazy loading
+  - Responsive images
+  - Font subsetting
 
 ### Backend
-- Query optimization
-- Response caching
-- Connection pooling
-- Resource limits
+- **Query Optimization**:
+  ```javascript
+  const queryConfig = {
+    maxLimit: 100,
+    defaultLimit: 20,
+    cacheDuration: 300,
+    indexedFields: ['name', 'category', 'price']
+  };
+  ```
+- **Caching Strategy**:
+  - Redis implementation
+  - Cache invalidation
+  - Cache warming
+  - Partial cache updates
+  - Cache hit ratio monitoring
 
-### Network
-- CDN usage
-- Compression
-- HTTP/2
-- Browser caching
+### Monitoring and Analytics
+- **Performance Metrics**:
+  ```javascript
+  const metrics = {
+    ttfb: 'Time to First Byte',
+    fcp: 'First Contentful Paint',
+    lcp: 'Largest Contentful Paint',
+    fid: 'First Input Delay',
+    cls: 'Cumulative Layout Shift'
+  };
+  ```
+- **Error Tracking**:
+  - Stack trace collection
+  - User context
+  - Environment data
+  - Performance impact
+  - Error grouping
 
 ## Troubleshooting Guide
 
